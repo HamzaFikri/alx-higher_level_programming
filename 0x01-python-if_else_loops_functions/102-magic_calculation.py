@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-def remove_char_at(str, n):
-    newstr = ""
-    for i, c in enumerate(str):
-        if i != n:
-            newstr += c
-    return newstr
+def magic_calculation(a, b, c):
+    if a < b:
+        return c
+    elif c > b:
+        return (a + b)
+    return (a * b - c)
