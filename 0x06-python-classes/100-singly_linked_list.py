@@ -1,67 +1,58 @@
 #!/usr/bin/python3
+"""Define classes for a singly-linked list."""
+
+
 class Node:
-    """ Class to each node of a Singly linked list
-    """
+    """Represent a node in a singly-linked list."""
 
     def __init__(self, data, next_node=None):
-        """ Class constructor
+        """Initialize a new Node.
 
         Args:
-            data (int): Payload
-            next_node (object Node): Porter to the next_node
+            data (int): The data of the new Node.
+            next_node (Node): The next node of the new Node.
         """
         self.data = data
         self.next_node = next_node
 
     @property
     def data(self):
-        """ Class getter for data
-
-        Returns:
-            data (int): The payload node
-        """
-        return self.__data
+        """Get/set the data of the Node."""
+        return (self.__data)
 
     @data.setter
-    def data(self, data):
-        """ Class setter for data
-        """
-        if not type(data) is int:
-            raise TypeError('data must be an integer')
-        self.__data = data
+    def data(self, value):
+        if not isinstance(value, int):
+            raise TypeError("data must be an integer")
+        self.__data = value
 
     @property
     def next_node(self):
-        """ Class getter for next_node
-
-        Returns:
-            next_node (Object): The next node
-        """
-        return self.__next_node
+        """Get/set the next_node of the Node."""
+        return (self.__next_node)
 
     @next_node.setter
-    def next_node(self, next_node):
-        """ Class setter for next_node
-        """
-        if (not type(next_node) is Node) and next_node is not None:
-            raise TypeError('next_node must be a Node object')
-        self.__next_node = next_node
+    def next_node(self, value):
+        if not isinstance(value, Node) and value is not None:
+            raise TypeError("next_node must be a Node object")
+        self.__next_node = value
 
 
 class SinglyLinkedList:
-    """ Class to support the Singly linked list
-    """
+    """Represent a singly-linked list."""
 
     def __init__(self):
-        """ Class constructor
-        """
+        """Initalize a new SinglyLinkedList."""
         self.__head = None
 
     def sorted_insert(self, value):
-        """ Ordered inserting method
+        """Insert a new Node to the SinglyLinkedList.
+
+        The node is inserted into the list at the correct
+        ordered numerical position.
 
         Args:
-            value (int): The payload for the node
+            value (Node): The new Node to insert.
         """
         new = Node(value)
         if self.__head is None:
@@ -72,14 +63,14 @@ class SinglyLinkedList:
             self.__head = new
         else:
             tmp = self.__head
-            while (tmp.next_node is not None and tmp.next_node.data < value):
+            while (tmp.next_node is not None and
+                    tmp.next_node.data < value):
                 tmp = tmp.next_node
             new.next_node = tmp.next_node
             tmp.next_node = new
 
     def __str__(self):
-        """ Formating list of date for print
-        """
+        """Define the print() representation of a SinglyLinkedList."""
         values = []
         tmp = self.__head
         while tmp is not None:
