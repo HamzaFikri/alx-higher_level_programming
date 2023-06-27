@@ -1,62 +1,81 @@
 #!/usr/bin/python3
-"""class Square that defines a square"""
+"""Square module."""
 
 
 class Square:
-    """class Square that defines a square"""
+    """Defines a square."""
+
+    def __str__(self):
+        self.my_print()
 
     def __init__(self, size=0, position=(0, 0)):
-        """Instantiation with optional size and position"""
-        if not type(size) is int:
-            raise TypeError("size must be an integer")
-        elif size < 0:
-            raise ValueError("size must be >= 0")
-        elif not type(position) is tuple or len(position) != 2:
-            raise TypeError("position must be a tuple of 2 positive integers")
-        elif (not type(position[0]) is int) or (not type(position[1]) is int):
-            raise TypeError("position must be a tuple of 2 positive integers")
-        elif position[0] < 0 or position[1] < 0:
-            raise TypeError("position must be a tuple of 2 positive integers")
-        else:
-            self.__size = size
-            self.__position = position
+        """Constructor.
+
+        Args:
+            size: Length of a side of the square.
+            position: Position of the square.
+        """
+        self.size = size
+        self.position = position
 
     @property
     def size(self):
-        """property to retrieve it"""
+        """Property for the length of a side of this square.
+
+        Raises:
+            TypeError: If size is not an integer.
+            ValueError: If size is less than 0.
+        """
         return self.__size
 
     @size.setter
     def size(self, value):
-        """property setter to set it"""
+        if not isinstance(value, int):
+            raise TypeError('size must be an integer')
+        if value < 0:
+            raise ValueError('size must be >= 0')
         self.__size = value
 
     @property
     def position(self):
-        """property to retrieve it"""
+        """Property for the position of this square.
+
+        Raises:
+            TypeError: If value is not tuple of 2 positive integers.
+        """
         return self.__position
 
     @position.setter
     def position(self, value):
-        """property setter to set it"""
+        if not isinstance(value, tuple) or len(value) != 2 or \
+         len([x for x in value if isinstance(x, int) and x >= 0]) != 2:
+            raise TypeError('position must be a tuple of 2 positive integers')
         self.__position = value
 
     def area(self):
-        """Public instance that returns the  square area"""
-        return self.__size * self.__size
+        """Area of this square.
+
+        Returns:
+            The size squared.
+        """
+        return self.__size ** 2
+
+    def my_sprint(self):
+        """Returns string representation of this square."""
+        ret = ""
+        if not self.size:
+            return "\n"
+
+        for i in range(self.position[1]):
+                ret += "\n"
+        for i in range(self.size):
+            for j in range(self.position[0]):
+                ret += " "
+            for j in range(self.size):
+                ret += "#"
+            ret += "\n"
+        return ret
 
     def my_print(self):
-        """Public instance that prints the square with the char #"""
-        if self.__size == 0:
-            print("")
-            return
-        if self.__position[1] > 0:
-            for l in range(0, self.__position[1]):
-                print("")
-        for i in range(0, self.__size):
-            if self.__position[0] > 0:
-                for k in range(0, self.__position[0]):
-                    print(" ", end="")
-            for j in range(0, self.__size):
-                print("#", end="")
-            print("")
+        """Prints this square."""
+        print(self.my_sprint(), end="")
