@@ -1,63 +1,102 @@
 #!/usr/bin/python3
-"""module for use in log debugging
+'''A script that Reads HTTP log entries from standard input,
+extracts metrics such as the total file size and the counts of different
+..status codes, periodically prints the accumulated statistics.
+'''
+import re
+
+
+status_codes_stats = {
+    '200': 0,
+    '301': 0,
+    '400': 0,
+    '401': 0,
+    '403': 0,
+    '404': 0,
+    '405': 0,
+    '500': 0
+}
+"""To print each status code and its counts...
 """
+total_file_size = 0
+"""variable keeps track of the commulative sum of the sizes in the HTTP logs
+"""
+fp = (
+    r'\s*(?P<ip>\S+)\s*',
+    r'\s*\[(?P<date>\d+\-\d+\-\d+ \d+:\d+:\d+\.\d+)\]',
+    r'\s*"(?P<request>[^"]*)"\s*',
+    r'\s*(?P<status_code>\S+)',
+    r'\s*(?P<file_size>\d+)'
+)
+"""This tupple contains regular expressions that define the pattern for each
+field in the log entry. These expressions that capture the IP address,
+date, request, status codem and the file size.
+"""
+log_fmt = '{}\\-{}{}{}{}\\s*'.format(fp[0], fp[1], fp[2], fp[3], fp[4])
+'''This string combines the regular expressions from 'fp' to create a single
+regex pattern that matches an entire log entry.
+'''
 
 
-import sys
-
-
-class DebugLog:
-    """class for use in debugging stdin logs
+def print_statistics():
+    """This function prints the accumulated statistics of the HTTP log.
+    It first prints the total file size and then iterates over the sorted keys
+...'of status_codes_stats' to print each status code and its count.
     """
-    def __init__(self):
-        self.lines = []
-        self.total_size = 0
-        self.codes_200 = 0
-        self.codes_401 = 0
-        self.codes_403 = 0
-        self.codes_404 = 0
-        self.codes_405 = 0
-        self.codes_500 = 0
-        self.__current_line = 0
+    global total_file_size, status_codes_stats
+    print('File size: {:d}'.format(total_file_size), flush=True)
+    for status_code in sorted(status_codes_stats.keys()):
+        num = status_codes_stats.get(status_code, 0)
+        if num > 0:
+            print('{:s}: {:d}'.format(status_code, num), flush=True)
 
-    def __str__(self):
-        string = "File size: " + str(self.total_size) + '\n'
-        string += "200: " + str(self.codes_200) + '\n'
-        string += "401: " + str(self.codes_401) + '\n'
-        string += "403: " + str(self.codes_403) + '\n'
-        string += "404: " + str(self.codes_404) + '\n'
-        string += "405: " + str(self.codes_405) + '\n'
-        string += "500: " + str(self.codes_500)
-        return string
 
-    def update(self, iteration_n):
-        """updates current response numbers
-            with new set of lines
+def get_metrics(line):
+    """
+    This function retrieves the metrics from a given HTTP log line. It uses
+    the regex pattern 'log_fmt' to match the line and extract the status
+    code and file size. It increments the 'total_file_size' by the file size
+    update the count in 'status_codes_stats' for the corresponding status code
+    """
+    global total_file_size, log_fmt, status_codes_stats
+    resp_match = re.fullmatch(log_fmt, line)
+    if resp_match is not None:
+        status_code = resp_match.group('status_code')
+        file_size = int(resp_match.group('file_size'))
+        total_file_size += file_size
+        if status_code in status_codes_stats.keys():
+            status_codes_stats[status_code] += 1
+
+
+def run():
+    """
+    This function is the main Entry Point of the script. It reads lines of
+    input using the 'input()' function and processes each line by calling
+    'get_metrics(line)' to extract the metrics. It keeps track of the line
+    number and prints the statistics using 'print_statistics()' every 10 lines
+    """
+    line_num = 0
+    try:
+        """The 'try_except' block in this 'run()' function catches a...
+        'keyboardInterrupt' or 'EOFError' excepton, which occur when the user
+        Interrupts the script with Ctrl+C or when the end of input is reached
+        In either case, it calls 'print_statistics()' to print
+        ..the final statistics...
         """
-        for i in range(self.__current_line, self.__current_line + iteration_n):
-            if "200" in self.lines[i]:
-                self.codes_200 += 1
-            elif "401" in self.lines[i]:
-                self.codes_401 += 1
-            elif "403" in self.lines[i]:
-                self.codes_403 += 1
-            elif "404" in self.lines[i]:
-                self.codes_404 += 1
-            elif "405" in self.lines[i]:
-                self.codes_405 += 1
-            elif "500" in self.lines[i]:
-                self.codes_500 += 1
-            words = line.split(' ')
-            self.total_size += int(words[-1])
-            self.__current_line += 1
+        while True:
+            line = input()
+            get_metrics(line)
+            line_num += 1
+            if line_num % 10 == 0:
+                print_statistics()
+    except (KeyboardInterrupt, EOFError):
+        print_statistics()
 
 
-log = DebugLog()
-lines = []
-line = sys.stdin.readline()
-while line != "":
-    log.lines.append(line)
-    if len(log.lines) % 10 == 0:
-        log.update(10)
-        print(log)
-    line = sys.stdin.readline()
+if __name__ == '__main__':
+    """
+    The 'if__name__ == '__main__':' block ensures that the code inside
+    is only executed when the script is run directly and not imported...
+    as a module... it calls the 'run()' function to start the log parser
+    """
+    run()
