@@ -1,6 +1,6 @@
 #!/usr/bin/node
 /*
-   script that prints 3 lines:
+   script that print 3 lines:
    - The first line: C is fun
    - The second line: Python is cool
    - The third line: Javascript is amazing
