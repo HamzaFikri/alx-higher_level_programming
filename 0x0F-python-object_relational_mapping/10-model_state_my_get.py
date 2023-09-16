@@ -2,8 +2,6 @@
 """
 Module that prints the first State object from the database hbtn_0e_6_usa
 """
-#!/usr/bin/python3
-"""A script that lists all states"""
 
 if __name__ == '__main__':
     from sys import argv
