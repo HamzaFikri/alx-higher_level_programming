@@ -4,7 +4,7 @@
   - The first argument is the movie ID
   - It is used the Star wars API with the endpoint
     https://swapi-api.hbtn.io/api/films/:id
-  - It is used the module request.
+  - It is used the module request
  */
 const request = require('request');
 const url = 'https://swapi-api.hbtn.io/api/films/' + process.argv[2];
