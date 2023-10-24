@@ -1,7 +1,7 @@
 #!/usr/bin/node
 /*
   script that prints the title of a Star Wars movie where the episode number
-  matches a given integer.
+  matches a given integer
   - The first argument is the movie ID
   - It is used the Star wars API with the endpoint
     https://swapi-api.hbtn.io/api/films/:id
