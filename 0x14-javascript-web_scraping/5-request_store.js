@@ -4,7 +4,7 @@
   - The first argument is the URL to request
   - The second argument the file path to store the body response
   - The file is in UTF-8 encoded
-  - It is used the module request.
+  - It is used the module request
  */
 const request = require('request');
 const fs = require('fs');
